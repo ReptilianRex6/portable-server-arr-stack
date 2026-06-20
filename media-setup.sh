@@ -1,4 +1,3 @@
-```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -26,14 +25,12 @@ sudo mkdir -p /srv/media/shows
 echo "Creating qBittorrent user..."
 sudo useradd -r -m -s /usr/sbin/nologin qbittorrent 2>/dev/null || true
 
-echo "Setting permissions..."
-sudo chown -R qbittorrent:qbittorrent /srv/downloads
-sudo chmod -R 775 /srv/downloads
-sudo chown -R "$USER_NAME:$USER_NAME" /srv/media
-sudo chmod -R 775 /srv/media
+echo "Setting media permissions..."
+sudo chown -R "$USER_NAME:$USER_NAME" /srv/downloads /srv/media
+sudo chmod -R 775 /srv/downloads /srv/media
 
 echo "Creating qBittorrent service..."
-sudo tee /etc/systemd/system/qbittorrent-nox.service >/dev/null <<'EOF'
+sudo tee /etc/systemd/system/qbittorrent-nox.service >/dev/null <<EOF
 [Unit]
 Description=qBittorrent-nox
 After=network-online.target
@@ -41,8 +38,8 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=qbittorrent
-Group=qbittorrent
+User=$USER_NAME
+Group=$USER_NAME
 ExecStart=/usr/bin/qbittorrent-nox --webui-port=8080
 Restart=on-failure
 
@@ -128,15 +125,21 @@ curl -fsSL https://tailscale.com/install.sh | sh
 
 echo "Configuring firewall..."
 sudo ufw allow OpenSSH
+sudo ufw allow 7878/tcp
 sudo ufw allow 8080/tcp
 sudo ufw allow 8096/tcp
+sudo ufw allow 8989/tcp
+sudo ufw allow 9696/tcp
 sudo ufw allow in on "$HOTSPOT_IFACE"
 sudo ufw --force enable
 
 echo "Whitelisting local service ports in NordVPN..."
 nordvpn whitelist add port 22 || true
+nordvpn whitelist add port 7878 || true
 nordvpn whitelist add port 8080 || true
 nordvpn whitelist add port 8096 || true
+nordvpn whitelist add port 8989 || true
+nordvpn whitelist add port 9696 || true
 nordvpn set lan-discovery on || true
 
 echo ""
@@ -159,4 +162,3 @@ echo "4. sudo tailscale up"
 echo ""
 echo "qBittorrent temporary password:"
 echo 'sudo journalctl -u qbittorrent-nox -n 50 | grep "temporary password"'
-```
