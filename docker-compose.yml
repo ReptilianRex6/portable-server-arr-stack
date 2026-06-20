@@ -1,4 +1,3 @@
-```yaml
 services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -22,8 +21,7 @@ services:
       - TZ=America/Denver
     volumes:
       - ./radarr:/config
-      - /srv/downloads:/srv/downloads
-      - /srv/media/movies:/movies
+      - /srv:/data
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -37,9 +35,7 @@ services:
       - TZ=America/Denver
     volumes:
       - ./sonarr:/config
-      - /srv/downloads:/srv/downloads
-      - /srv/media/shows:/tv
+      - /srv:/data
     ports:
       - 8989:8989
     restart: unless-stopped
-```
