@@ -1,0 +1,7 @@
+# Local configuration and application state
+.env
+setup.conf
+prowlarr/
+radarr/
+sonarr/
+*.log

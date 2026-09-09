@@ -1,11 +1,17 @@
+# New-user defaults: UID/GID 1000 and UTC.
+# Override PUID, PGID, and TZ in a .env file beside this file if needed.
+# On the Linux host, use `id -u` and `id -g` to find your numeric IDs.
+# Example timezone override: TZ=Europe/London
+# /srv is the data root created by media-setup.sh; config folders are relative
+# to this Compose file. Ensure the chosen user/group can access these paths.
 services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Denver
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
     volumes:
       - ./prowlarr:/config
     ports:
@@ -16,9 +22,9 @@ services:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Denver
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
     volumes:
       - ./radarr:/config
       - /srv:/data
@@ -30,9 +36,9 @@ services:
     image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Denver
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-Etc/UTC}
     volumes:
       - ./sonarr:/config
       - /srv:/data

@@ -1,0 +1,19 @@
+# Copy to setup.conf, chmod 600 setup.conf, then edit.
+# Plain KEY=value only: no quotes, inline comments, or shell expansion.
+# Omit MEDIA_USER to use the account that invoked sudo.
+# MEDIA_USER=mediauser
+INSTALL_JELLYFIN=true
+START_CONTAINERS=true
+INSTALL_NORDVPN=false
+INSTALL_TAILSCALE=false
+
+# Optional offline-only hotspot on a dedicated AP-capable Wi-Fi adapter.
+ENABLE_HOTSPOT=false
+HOTSPOT_IFACE=
+HOTSPOT_SSID=PortableMedia
+# Required only when hotspot is enabled; choose a unique 8–63 character value.
+HOTSPOT_PASSWORD=
+# All three addresses must be in the same /24. Keep the gateway outside the pool.
+HOTSPOT_IP=192.168.50.1
+HOTSPOT_DHCP_START=192.168.50.10
+HOTSPOT_DHCP_END=192.168.50.100
