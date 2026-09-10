@@ -25,6 +25,10 @@ qBittorrent and Jellyfin will not appear in `docker ps` in this deployment. Medi
 
 ## Configure and install
 
+Follow these steps on the Ubuntu host.
+
+### 1. Clone and prepare the repository
+
 Clone into a permanent directory: relative application config mounts depend on this location.
 
 ```bash
@@ -35,15 +39,56 @@ cp setup.conf.example setup.conf
 chmod 600 .env setup.conf
 id -u
 id -g
+```
+
+### 2. Configure Compose
+
+Edit the Compose environment file:
+
+```bash
 nano .env
-nano setup.conf
 ```
 
 In `.env`, set `PUID` and `PGID` to the numbers for the account that will run the media service, and choose a timezone. The defaults are `1000`, `1000`, and `Etc/UTC`.
+```yaml
+PUID=1000
+PGID=1000
+TZ=Etc/UTC
+```
+
+### 3. Configure host setup
+
+```bash
+nano setup.conf
+```
 
 `setup.conf` uses plain `KEY=value` lines: **no quotes, inline comments, or shell expansions**. Values are parsed as data rather than executed. By default the script uses the account that invoked sudo, installs Jellyfin, and starts the Compose stack. Set `MEDIA_USER` only to use another existing non-root account. It determines the real primary group instead of assuming the group matches the username.
 
 Hotspot, NordVPN, and Tailscale installation are disabled by default. No passwords are supplied by the repository.
+
+```yaml
+# Copy to setup.conf, chmod 600 setup.conf, then edit.
+# Plain KEY=value only: no quotes, inline comments, or shell expansion.
+# Omit MEDIA_USER to use the account that invoked sudo.
+# MEDIA_USER=mediauser
+INSTALL_JELLYFIN=true
+START_CONTAINERS=true
+INSTALL_NORDVPN=false
+INSTALL_TAILSCALE=false
+
+# Optional offline-only hotspot on a dedicated AP-capable Wi-Fi adapter.
+ENABLE_HOTSPOT=false
+HOTSPOT_IFACE=
+HOTSPOT_SSID=PortableMedia
+# Required only when hotspot is enabled; choose a unique 8–63 character value.
+HOTSPOT_PASSWORD=
+# All three addresses must be in the same /24. Keep the gateway outside the pool.
+HOTSPOT_IP=192.168.50.1
+HOTSPOT_DHCP_START=192.168.50.10
+HOTSPOT_DHCP_END=192.168.50.100
+```
+
+### 4. Validate and install
 
 ```bash
 sudo bash media-setup.sh --check
